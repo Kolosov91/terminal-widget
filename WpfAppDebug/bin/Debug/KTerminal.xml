@@ -1,0 +1,406 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>KTerminal</name>
+    </assembly>
+    <members>
+        <member name="T:KTerminalLib.KTerminalStringParser">
+            <summary>
+            Парсер для KTerminal
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ЦВЕТ">
+            <summary>
+            char-код символа = 5
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ЖИРНОСТЬ">
+            <summary>
+            char-код символа = 6
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.КУРСИВ">
+            <summary>
+            char-код символа = 16
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.КОНЕЦ_ФОРМАТ">
+            <summary>
+            char-код символа = 26
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ВОЗВРАТ_КАРЕТКИ">
+            <summary>
+            char-код символа 'r'
+            стирает последнюю строку
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ПЕРЕНОС_КАРЕТКИ">
+            <summary>
+            char-код символа 'n'
+            переходит к новой строке и стирание
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ПЕРЕВОД_КУРСОРА">
+            <summary>
+            Перевод курсора на строчку N и её стирание
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminalStringParser.ОЧИСТИТЬ_ЭКРАН">
+            <summary>
+            Очистка экранного буфера
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminalStringParser.ПолучитьЧистуюСтроку(System.String)">
+            <summary>
+            Получить строку без служебных символов
+            </summary>
+            <param name="строка">Строка</param>
+            <returns>Строка без служебных символов</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminalStringParser.РазбитьСтрокуНаТокены(System.String)">
+            <summary>
+            Разбивает строку на токены (по служебным символам)
+            </summary>
+            <param name="строка">строка</param>
+            <returns>список текстовых токенов</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminalStringParser.IsToken(System.String)">
+            <summary>
+            Проверка токена строковый или управляющий
+            </summary>
+            <param name="токен">токен</param>
+            <returns>признак Управляющего окена</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminalStringParser.ПолучитьЦвет(System.String)">
+            <summary>
+            Получает значение цвета из токена ЦВЕТ '5' RRGGBB '5'
+            </summary>
+            <param name="токен">строковый токен</param>
+            <returns>Цвет</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminalStringParser.ПолучитьИндексСтроки(System.String)">
+            <summary>
+            Получить значение индекса строки из токена '27' DEC '27'
+            </summary>
+            <param name="токен">строковый токен</param>
+            <returns>Индекс</returns>
+        </member>
+        <member name="T:KTerminalLib.Blocks.BlockBase">
+            <summary>
+            Базовый шаблон отображения
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockBase.RenderRect">
+            <summary>
+            Область рисования
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockBase.RenderBuffer">
+            <summary>
+            Буфер рисования
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockBase.#ctor">
+            <summary>
+            Конструктор
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockBase.Render(System.Windows.Point)">
+            <summary>
+            Базовый алгоритм рендеринга
+            </summary>
+            <param name="renderLocation"> точка отрисовки </param>
+            <returns> буфер рисования </returns>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockBase.DataRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            указатель на функцию с алгоритмом рисования
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockBase.RenderSize">
+            <summary>
+            Размеры области рисования
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockBase.IsClipping">
+            <summary>
+            Признак разрешения ограничения отрисовки
+            </summary>
+        </member>
+        <member name="T:KTerminalLib.Properties.Resources">
+            <summary>
+              Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Properties.Resources.ResourceManager">
+            <summary>
+              Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Properties.Resources.Culture">
+            <summary>
+              Перезаписывает свойство CurrentUICulture текущего потока для всех
+              обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
+            </summary>
+        </member>
+        <member name="T:KTerminalLib.KTerminal">
+             <summary>
+             Визуальный WPF-компонент Терминал (со служебными управляющими символамии).
+             Автор: Колосов В.В.
+             
+             (WPF, DonNetFramework 4)
+             
+            '\5 RRGGBB \5' - цвет шрифта (RRGGBB - шестнадцатеричное число)
+            '\6' - жирность
+            '\16' - курсив
+            '\26' - конец форматирования
+            '\r' - стирание текущей строки
+            '\n' - переход на следующую строку и стирание
+            '\27 DEC \27' - переход на строку N (c 0) и стирание, N - десятичное число (если N == -1, то переход на последний символ последней строки)
+            '\28' - очистка экрана
+             </summary>
+            <summary>
+            KTerminal
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminal.ШиринаКурсора">
+            <summary>
+            Ширина курсора
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminal.КоличествоСтрокЭкранногоБуфераProperty">
+            <summary>
+            Свойство - Количество Строк Экранного Буфера
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ValidateКоличествоСтрокЭкранногоБуфера(System.Object)">
+            <summary>
+            Проверка значения Количества Строк Экранного Буфера
+            </summary>
+            <param name="value">количество</param>
+            <returns>признак валидации</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.КоличествоСтрокЭкранногоБуфераChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Обработка при изменении свойтва Количество Строк Экранного Буфера
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.CoerceКоличествоСтрокЭкранногоБуфера(System.Windows.DependencyObject,System.Object)">
+            <summary>
+            Корректировка значения Количество Строк Экранного Буфера
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.KTerminal.ЦветФонаProperty">
+            <summary>
+            Свойство - Цвет фона
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ЦветФонаChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Реакция на изменение цвета фона
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.#cctor">
+            <summary>
+            Статический конструктор
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.#ctor">
+            <summary>
+            Конструктор
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ПосчитатьОптимальнуюВидимуюСтроку">
+            <summary>
+            Расчёт оптимального индекса видимой строки
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ПроконтролироватьКоличествоСтрок">
+            <summary>
+            Уонтроль количества строк (при необходимости удаление)
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ПолучитьСписокСтрок">
+            <summary>
+            Получить список строк 
+            без служебных символов
+            </summary>
+            <returns>список строк</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ПолучитьВидимыйСписокСтрок">
+            <summary>
+            Получает список строк, видимых на экране 
+            без служебных символов
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ДобавитьВСписокСтрок(System.Char[])">
+            <summary>
+            Добавление массива символов
+            в буфер терминала
+            </summary>
+            <param name="массив">массив символов</param>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ОчиститьСписокСтрок">
+            <summary>
+            Очищение буфера терминала
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            реакция на изменение свойств зависимостей
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.ConvertToBlockTemplate(System.String,System.Int32)">
+            <summary>
+            Преобразование текстовой строки в
+            специальный блок данных с параметрами форматирования
+            </summary>
+            <param name="строка">строка</param>
+            <param name="index">индекс строки</param>
+            <returns>специальный блок</returns>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Рендеринг компонента
+            </summary>
+            <param name="drawingContext">контекст рисования</param>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.hScrollBar_ValueChanged(System.Object,System.Windows.RoutedPropertyChangedEventArgs{System.Double})">
+            <summary>
+            Горизонтальный скроллинг
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.vScrollBar_ValueChanged(System.Object,System.Windows.RoutedPropertyChangedEventArgs{System.Double})">
+            <summary>
+            Вертикальный скроллинг
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.OnMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Горизонтальный скроллинг колёсиком мыши
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.OnRenderSizeChanged(System.Windows.SizeChangedInfo)">
+            <summary>
+            Обработка изменений размеров экрана
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.KTerminal.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.КоличествоСтрокЭкранногоБуфера">
+            <summary>
+            Допустимое Количество Строк Экранного Буфера
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.ЦветФона">
+            <summary>
+            Цвет фона
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.СписокСтрок">
+            <summary>
+            Внутренний буфер, содержащий список строк
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.ИндексПервойВидимойСтроки">
+            <summary>
+            Индекс первой видимой строки на экране
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.КоличествоВидимыхСтрок">
+            <summary>
+            Количество видимых строк на экране
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.ПозицияКурсора_Строка">
+            <summary>
+            Индекс активной строки
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.ПозицияКурсора_Столбец">
+            <summary>
+            Индекс активного символа
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.KTerminal.СписокПрямоугольныхОбластейВидимыхСтрок">
+            <summary>
+            Список прямоугольных областей,
+            видимых строк
+            </summary>
+        </member>
+        <member name="T:KTerminalLib.Blocks.BlockKTerminalLine">
+            <summary>
+            Шаблон блока-строка для KTerminal.
+            Производит рендеринг содержимого.
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockKTerminalLine.#ctor">
+            <summary>
+            Конструктор
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockKTerminalLine.DataRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Переопределённый Алгоритм рендеринга - обязательно
+            </summary>
+            <param name="dc"> контекст рисования </param>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockKTerminalLine.isItalic">
+            <summary>
+            Признак курсива
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockKTerminalLine.isBold">
+            <summary>
+            признак выделения
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockKTerminalLine.currentBrush">
+            <summary>
+            текущий цвет
+            </summary>
+        </member>
+        <member name="F:KTerminalLib.Blocks.BlockKTerminalLine.текущаяТочкаРисования">
+            <summary>
+            текущая точка рисования
+            </summary>
+        </member>
+        <member name="M:KTerminalLib.Blocks.BlockKTerminalLine.РИСОВАТЬ_СТРОКУ(System.String,System.Windows.Media.DrawingContext)">
+            <summary>
+            Отрисвоать строку
+            </summary>
+            <param name="токен">токен</param>
+            /// <param name="dc"> контекст рисования </param>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockKTerminalLine.Text">
+            <summary>
+            Текстовая строка
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockKTerminalLine.ColorBackground">
+            <summary>
+            Цвет фона
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockKTerminalLine.ColorFont">
+            <summary>
+            Цвет шрифта
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockKTerminalLine.FontSize">
+            <summary>
+            размер шрифта
+            </summary>
+        </member>
+        <member name="P:KTerminalLib.Blocks.BlockKTerminalLine.FontFamily">
+            <summary>
+            Название шрифта
+            </summary>
+        </member>
+    </members>
+</doc>

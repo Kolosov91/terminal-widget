@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="KTerminalLib.KTerminal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="150" MinHeight="100" MinWidth="150">
+    <Grid>
+        <ScrollBar Name="vScrollBar" HorizontalAlignment="Right" Width="20" Margin="0,0,0,20" SmallChange="1" IsEnabled="False" ValueChanged="vScrollBar_ValueChanged" />
+        <ScrollBar Margin="0,0,20,0" Name="hScrollBar" SmallChange="1" Orientation="Horizontal" Height="20" VerticalAlignment="Bottom" IsEnabled="False" ValueChanged="hScrollBar_ValueChanged" />
+    </Grid>
+</UserControl>
